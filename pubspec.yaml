@@ -17,6 +17,7 @@ dependencies:
   camera: 
   provider: 
   cached_network_image: 
+  go_router: ^17.1.0
 
 dev_dependencies:
   flutter_test:
