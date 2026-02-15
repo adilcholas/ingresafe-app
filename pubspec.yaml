@@ -10,6 +10,14 @@ dependencies:
   flutter:
     sdk: flutter
 
+  firebase_core: 
+  cloud_firestore: 
+  google_ml_kit: 
+  image_picker: 
+  camera: 
+  provider: 
+  cached_network_image: 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
