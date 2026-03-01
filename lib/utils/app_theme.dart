@@ -1,81 +1,179 @@
 import 'package:flutter/material.dart';
-import 'theme_constants.dart';
+import 'app_colors.dart';
 
 class AppTheme {
-  static ThemeData lightTheme = ThemeData(
+  /// 🌞 LIGHT THEME (Warm, Friendly, Non-Clinical)
+  static final ThemeData lightTheme = ThemeData(
+    useMaterial3: true,
     brightness: Brightness.light,
-    primaryColor: AppColors.primaryGreen,
+    fontFamily: 'Roboto',
+
     scaffoldBackgroundColor: AppColors.lightBackground,
+
+    colorScheme: const ColorScheme.light(
+      primary: AppColors.primary,
+      secondary: AppColors.secondary,
+      surface: AppColors.lightSurface,
+      error: AppColors.error,
+      onPrimary: Colors.white,
+      onSurface: AppColors.lightTextPrimary,
+    ),
+
+    /// AppBar (Soft, Clean)
     appBarTheme: const AppBarTheme(
-      backgroundColor: AppColors.primaryGreen,
-      foregroundColor: Colors.white,
+      backgroundColor: AppColors.lightSurface,
+      foregroundColor: AppColors.lightTextPrimary,
       elevation: 0,
       centerTitle: true,
     ),
-    colorScheme: const ColorScheme.light(
-      primary: AppColors.primaryGreen,
-      secondary: AppColors.safeGreen,
-      error: AppColors.dangerRed,
+
+    /// Cards (Soft Cream Feel)
+    cardTheme: CardThemeData(
+      color: AppColors.lightCard,
+      elevation: 3,
+      shadowColor: Colors.black12,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+      ),
     ),
-    cardColor: AppColors.lightSurface,
+
+    /// Elevated Buttons (Warm Primary)
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        minimumSize: const Size(double.infinity, 60), // Elder-friendly size
+        textStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+    ),
+
+    /// Outlined Buttons
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: AppColors.primary,
+        side: const BorderSide(color: AppColors.primary, width: 1.5),
+        minimumSize: const Size(double.infinity, 60),
+        textStyle: const TextStyle(fontSize: 18),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+    ),
+
+    /// Text Theme (Large for Accessibility)
     textTheme: const TextTheme(
-      bodyLarge: TextStyle(
-        color: AppColors.lightText,
-        fontSize: 16,
+      headlineMedium: TextStyle(
+        fontSize: 26,
+        fontWeight: FontWeight.bold,
+        color: AppColors.lightTextPrimary,
       ),
       titleLarge: TextStyle(
         fontSize: 22,
-        fontWeight: FontWeight.bold,
-        color: AppColors.lightText,
+        fontWeight: FontWeight.w600,
+        color: AppColors.lightTextPrimary,
+      ),
+      bodyLarge: TextStyle(
+        fontSize: 18,
+        color: AppColors.lightTextPrimary,
+      ),
+      bodyMedium: TextStyle(
+        fontSize: 16,
+        color: AppColors.lightTextSecondary,
       ),
     ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primaryGreen,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+
+    /// Switch (for theme toggle)
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStateProperty.all(AppColors.primary),
+      trackColor: WidgetStateProperty.all(
+        AppColors.primary.withValues(alpha: 0.3),
       ),
     ),
   );
 
-  static ThemeData darkTheme = ThemeData(
+  /// 🌙 DARK THEME (Warm Dark — Not Harsh Black)
+  static final ThemeData darkTheme = ThemeData(
+    useMaterial3: true,
     brightness: Brightness.dark,
-    primaryColor: AppColors.primaryGreen,
+    fontFamily: 'Roboto',
+
     scaffoldBackgroundColor: AppColors.darkBackground,
+
+    colorScheme: const ColorScheme.dark(
+      primary: AppColors.primary,
+      secondary: AppColors.secondary,
+      surface: AppColors.darkSurface,
+      error: AppColors.error,
+      onPrimary: Colors.white,
+      onSurface: AppColors.darkTextPrimary,
+    ),
+
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.darkSurface,
-      foregroundColor: Colors.white,
+      foregroundColor: AppColors.darkTextPrimary,
       elevation: 0,
       centerTitle: true,
     ),
-    colorScheme: const ColorScheme.dark(
-      primary: AppColors.primaryGreen,
-      secondary: AppColors.safeGreen,
-      error: AppColors.dangerRed,
+
+    cardTheme: CardThemeData(
+      color: AppColors.darkCard,
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+      ),
     ),
-    cardColor: AppColors.darkSurface,
+
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        minimumSize: const Size(double.infinity, 60),
+        textStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+    ),
+
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: AppColors.secondary,
+        side: const BorderSide(color: AppColors.secondary, width: 1.5),
+        minimumSize: const Size(double.infinity, 60),
+        textStyle: const TextStyle(fontSize: 18),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+    ),
+
     textTheme: const TextTheme(
-      bodyLarge: TextStyle(
-        color: AppColors.darkText,
-        fontSize: 16,
+      headlineMedium: TextStyle(
+        fontSize: 26,
+        fontWeight: FontWeight.bold,
+        color: AppColors.darkTextPrimary,
       ),
       titleLarge: TextStyle(
         fontSize: 22,
-        fontWeight: FontWeight.bold,
-        color: AppColors.darkText,
+        fontWeight: FontWeight.w600,
+        color: AppColors.darkTextPrimary,
       ),
-    ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primaryGreen,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+      bodyLarge: TextStyle(
+        fontSize: 18,
+        color: AppColors.darkTextPrimary,
+      ),
+      bodyMedium: TextStyle(
+        fontSize: 16,
+        color: AppColors.darkTextSecondary,
       ),
     ),
   );

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ingresafe/providers/health_profile_provider.dart';
+import 'package:ingresafe/providers/scan_provider.dart';
 import 'package:ingresafe/providers/theme_provider.dart';
 import 'package:ingresafe/utils/app_theme.dart';
 import 'package:provider/provider.dart';
@@ -17,8 +19,9 @@ class IngreSafeApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AppProvider()),
-                ChangeNotifierProvider(create: (_) => ThemeProvider()),
-
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => HealthProfileProvider()),
+        ChangeNotifierProvider(create: (_) => ScanProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
