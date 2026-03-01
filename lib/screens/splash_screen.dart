@@ -55,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/image/ingresafe_splash.png',
+                'assets/images/ingresafe_splash.png',
                 width: 200, // Adjust size as needed
                 height: 200,
               ),
