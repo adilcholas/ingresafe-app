@@ -11,13 +11,26 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+
   @override
   void initState() {
     super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    );
+
+    _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+
+    _controller.forward();
     _navigate();
   }
 
   Future<void> _navigate() async {
+    // Keeping your 2-second delay
     await Future.delayed(const Duration(seconds: 2));
     if (mounted) {
       context.go('/onboarding');
@@ -25,36 +38,39 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
+      // Using light background to let the Emerald Green logo stand out
+      backgroundColor: AppColors.lightBackground,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(
-              Icons.health_and_safety_rounded,
-              size: 72,
-              color: Colors.white,
-            ),
-            SizedBox(height: 16),
-            Text(
-              'IngreSafe',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/image/ingresafe_splash.png',
+                width: 200, // Adjust size as needed
+                height: 200,
               ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Scan • Understand • Stay Safe',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.white70,
+              const SizedBox(height: 24),
+              // Optional: Add a subtle loading indicator if the logic takes longer
+              const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
