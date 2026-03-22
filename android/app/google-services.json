@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "76986820994",
+    "project_id": "ingresafe-2248a",
+    "storage_bucket": "ingresafe-2248a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:76986820994:android:bbf29ef4556e502f48079b",
+        "android_client_info": {
+          "package_name": "com.example.ingresafe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCn68zNnA_Dku38bgd2WKdZmwRbEYWgjM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:ingresafe/firebase_options.dart';
 import 'package:ingresafe/providers/health_profile_provider.dart';
 import 'package:ingresafe/providers/scan_provider.dart';
 import 'package:ingresafe/providers/theme_provider.dart';
@@ -7,7 +9,9 @@ import 'package:provider/provider.dart';
 import 'providers/app_provider.dart';
 import 'utils/app_router.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const IngreSafeApp());
 }
 
