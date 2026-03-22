@@ -7,29 +7,41 @@ class HealthProfileProvider with ChangeNotifier {
   HealthProfileModel get profile => _profile;
 
   void toggleAllergy(String allergy) {
-    if (_profile.allergies.contains(allergy)) {
-      _profile.allergies.remove(allergy);
+    final updatedList = List<String>.from(_profile.allergies);
+
+    if (updatedList.contains(allergy)) {
+      updatedList.remove(allergy);
     } else {
-      _profile.allergies.add(allergy);
+      updatedList.add(allergy);
     }
+
+    _profile = _profile.copyWith(allergies: updatedList);
     notifyListeners();
   }
 
   void toggleDiet(String diet) {
-    if (_profile.dietaryPreferences.contains(diet)) {
-      _profile.dietaryPreferences.remove(diet);
+    final updatedList = List<String>.from(_profile.dietaryPreferences);
+
+    if (updatedList.contains(diet)) {
+      updatedList.remove(diet);
     } else {
-      _profile.dietaryPreferences.add(diet);
+      updatedList.add(diet);
     }
+
+    _profile = _profile.copyWith(dietaryPreferences: updatedList);
     notifyListeners();
   }
 
   void toggleCondition(String condition) {
-    if (_profile.healthConditions.contains(condition)) {
-      _profile.healthConditions.remove(condition);
+    final updatedList = List<String>.from(_profile.healthConditions);
+
+    if (updatedList.contains(condition)) {
+      updatedList.remove(condition);
     } else {
-      _profile.healthConditions.add(condition);
+      updatedList.add(condition);
     }
+
+    _profile = _profile.copyWith(healthConditions: updatedList);
     notifyListeners();
   }
 

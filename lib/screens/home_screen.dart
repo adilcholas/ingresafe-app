@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/scan_provider.dart';
 import '../utils/app_spacing.dart';
 import '../utils/theme_constants.dart';
 
@@ -8,12 +11,12 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scanProvider = context.watch<ScanProvider>();
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primary,
-        onPressed: () => context.go('/scan'),
+        onPressed: () => context.push('/scan'),
         child: const Icon(Icons.camera_alt_rounded, color: Colors.white),
       ),
       body: SafeArea(
@@ -47,7 +50,7 @@ class HomeScreen extends StatelessWidget {
                     backgroundColor: AppColors.primary.withOpacity(0.15),
                     child: IconButton(
                       icon: const Icon(Icons.settings),
-                      onPressed: () => context.go('/settings'),
+                      onPressed: () => context.push('/settings'),
                     ),
                   ),
                 ],
@@ -103,27 +106,30 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              /// Recent Scan Cards (Mock for MVP UI)
+              /// 🔥 Dynamic Recent Scans
               Expanded(
-                child: ListView(
-                  children: const [
-                    _RecentScanCard(
-                      product: "Chocolate Spread",
-                      risk: "Caution",
-                      color: AppColors.caution,
-                    ),
-                    _RecentScanCard(
-                      product: "Protein Bar",
-                      risk: "Safe",
-                      color: AppColors.safe,
-                    ),
-                    _RecentScanCard(
-                      product: "Instant Noodles",
-                      risk: "Risky",
-                      color: AppColors.danger,
-                    ),
-                  ],
-                ),
+                child: scanProvider.recentScans.isEmpty
+                    ? const Center(
+                        child: Text(
+                          "No scans yet",
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: scanProvider.recentScans.length,
+                        itemBuilder: (context, index) {
+                          final scan = scanProvider.recentScans[index];
+
+                          return _RecentScanCard(
+                            product: scan.productName,
+                            risk: scan.riskLevel,
+                            color: _getRiskColor(scan.riskLevel),
+                            onTap: () {
+                              context.push('/scan-detail', extra: scan);
+                            },
+                          );
+                        },
+                      ),
               ),
             ],
           ),
@@ -131,17 +137,34 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+
+  /// Risk Color Mapper
+  Color _getRiskColor(String risk) {
+    switch (risk) {
+      case 'Safe':
+        return AppColors.safe;
+      case 'Caution':
+        return AppColors.caution;
+      case 'Risky':
+        return AppColors.danger;
+      default:
+        return Colors.grey;
+    }
+  }
 }
 
+/// Updated Card with tap support
 class _RecentScanCard extends StatelessWidget {
   final String product;
   final String risk;
   final Color color;
+  final VoidCallback? onTap;
 
   const _RecentScanCard({
     required this.product,
     required this.risk,
     required this.color,
+    this.onTap,
   });
 
   @override
@@ -149,6 +172,7 @@ class _RecentScanCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
+        onTap: onTap,
         leading: CircleAvatar(
           backgroundColor: color.withOpacity(0.15),
           child: Icon(Icons.inventory_2, color: color),

@@ -58,9 +58,7 @@ class ScanScreen extends StatelessWidget {
               children: [
                 /// Capture Button
                 GestureDetector(
-                  onTap: () {
-                    context.go('/processing');
-                  },
+                  onTap: () => _captureImage(context),
                   child: Container(
                     height: 72,
                     width: 72,
@@ -79,9 +77,7 @@ class ScanScreen extends StatelessWidget {
 
                 /// Gallery Upload
                 TextButton.icon(
-                  onPressed: () {
-                    context.go('/processing');
-                  },
+                  onPressed: () => _pickFromGallery(context),
                   icon: const Icon(Icons.photo_library, color: Colors.white),
                   label: const Text(
                     "Upload from Gallery",
@@ -98,6 +94,23 @@ class ScanScreen extends StatelessWidget {
 
   Future<void> _pickFromGallery(BuildContext context) async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      final file = File(pickedFile.path);
+      await context.read<ScanProvider>().processImage(file);
+
+      if (context.mounted) {
+        context.go('/processing');
+      }
+    } else {
+      if (context.mounted) {
+        context.go('/error');
+      }
+    }
+  }
+
+  Future<void> _captureImage(BuildContext context) async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
 
     if (pickedFile != null) {
       final file = File(pickedFile.path);

@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:ingresafe/models/ingredient_model.dart';
 import 'package:ingresafe/screens/alternatives_screen.dart';
+import 'package:ingresafe/screens/compare_screen.dart';
 import 'package:ingresafe/screens/error_screen.dart';
 import 'package:ingresafe/screens/history_screen.dart';
 import 'package:ingresafe/screens/ingredient_detail_screen.dart';
@@ -74,6 +75,7 @@ class AppRouter {
         path: '/error',
         builder: (context, state) => const ScanErrorScreen(),
       ),
+      GoRoute(path: '/compare', builder: (context, state) => CompareScreen()),
     ],
   );
 }
