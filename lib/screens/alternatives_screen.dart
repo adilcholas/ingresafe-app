@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/scan_provider.dart';
@@ -91,11 +92,7 @@ class AlternativesScreen extends StatelessWidget {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/compare',
-                          arguments: latestScan,
-                        );
+                        context.push('/compare', extra: latestScan);
                       },
                       child: const Text("Compare Ingredients"),
                     ),

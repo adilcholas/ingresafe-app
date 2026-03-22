@@ -15,20 +15,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _controller = PageController();
   int currentIndex = 0;
 
-  final List<Map<String, String>> onboardingData = [
+  final List<Map<String, dynamic>> onboardingData = [
     {
       "title": "Scan Product Ingredients",
       "subtitle":
           "Instantly scan food, cosmetics, and labels to understand what you consume.",
+      "icon": Icons.document_scanner_rounded,
     },
     {
       "title": "AI-Powered Safety Analysis",
       "subtitle":
           "Smart ingredient detection with risk categorization: Safe, Caution, Risk.",
+      "icon": Icons.health_and_safety_rounded,
     },
     {
       "title": "Personalized Health Warnings",
       "subtitle": "Get alerts based on your allergies and dietary preferences.",
+      "icon": Icons.warning_amber_rounded,
     },
   ];
 
@@ -80,8 +83,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           color: AppColors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: const Icon(
-                          Icons.health_and_safety_rounded,
+                        child: Icon(
+                          onboardingData[index]["icon"],
                           size: 100,
                           color: AppColors.primary,
                         ),
