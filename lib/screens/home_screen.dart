@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../models/scan_result.dart';
+import '../providers/health_profile_provider.dart';
 import '../providers/scan_provider.dart';
 import '../utils/app_spacing.dart';
 import '../utils/theme_constants.dart';
@@ -12,33 +14,35 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scanProvider = context.watch<ScanProvider>();
+    final healthProfile = context.watch<HealthProfileProvider>().profile;
+
+    // Greeting based on health profile completeness
+    final hasProfile =
+        healthProfile.allergies.isNotEmpty ||
+        healthProfile.dietaryPreferences.isNotEmpty ||
+        healthProfile.healthConditions.isNotEmpty;
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.primary,
-        onPressed: () => context.push('/scan'),
-        child: const Icon(Icons.camera_alt_rounded, color: Colors.white),
-      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.screenPadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// Header
+              /// ── Header ────────────────────────────────────────────────────
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        "Hello 👋",
+                    children: [
+                      const Text(
+                        'Hello 👋',
                         style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
-                      SizedBox(height: 4),
-                      Text(
-                        "Stay Safe with IngreSafe",
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Stay Safe with IngreSafe',
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -47,7 +51,7 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                   CircleAvatar(
-                    backgroundColor: AppColors.primary.withOpacity(0.15),
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.15),
                     child: IconButton(
                       icon: const Icon(Icons.settings),
                       onPressed: () => context.push('/settings'),
@@ -58,75 +62,140 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: AppSpacing.sectionGap),
 
-              /// Hero Scan Card
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.qr_code_scanner,
-                      size: 40,
-                      color: AppColors.primary,
+              /// ── Health Profile Alert (if not set) ─────────────────────────
+              if (!hasProfile)
+                GestureDetector(
+                  onTap: () => context.push('/health-profile'),
+                  child: Container(
+                    margin: const EdgeInsets.only(
+                      bottom: AppSpacing.sectionGap,
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Scan a Product Label",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 6),
-                          Text(
-                            "Instant AI analysis of ingredients & safety risks",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ],
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.caution.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppColors.caution.withValues(alpha: 0.4),
                       ),
                     ),
-                  ],
+                    child: Row(
+                      children: const [
+                        Icon(
+                          Icons.warning_amber_rounded,
+                          color: AppColors.caution,
+                        ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Set up your health profile for personalized warnings',
+                            style: TextStyle(fontSize: 13),
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 14,
+                          color: AppColors.caution,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+              /// ── Hero Scan Card ─────────────────────────────────────────────
+              GestureDetector(
+                onTap: () => context.push('/scan'),
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.qr_code_scanner,
+                        size: 40,
+                        color: AppColors.primary,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              'Scan a Product Label',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 6),
+                            Text(
+                              'Instant AI analysis of ingredients & safety risks',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                        color: AppColors.primary,
+                      ),
+                    ],
+                  ),
                 ),
               ),
 
               const SizedBox(height: AppSpacing.sectionGap),
 
-              /// Recent Scans Title
-              const Text(
-                "Recent Scans",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              /// ── Recent Scans Title ─────────────────────────────────────────
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Recent Scans',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  if (scanProvider.recentScans.isNotEmpty)
+                    TextButton(
+                      onPressed: () => context.push('/history'),
+                      child: const Text('See All'),
+                    ),
+                ],
               ),
 
               const SizedBox(height: 12),
 
-              /// 🔥 Dynamic Recent Scans
+              /// ── Recent Scans List ──────────────────────────────────────────
               Expanded(
                 child: scanProvider.recentScans.isEmpty
                     ? const Center(
-                        child: Text(
-                          "No scans yet",
-                          style: TextStyle(color: Colors.grey),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.document_scanner_outlined,
+                              size: 60,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(height: 12),
+                            Text(
+                              'No scans yet.\nTap the camera button to start.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
                         ),
                       )
                     : ListView.builder(
                         itemCount: scanProvider.recentScans.length,
                         itemBuilder: (context, index) {
                           final scan = scanProvider.recentScans[index];
-
                           return _RecentScanCard(
-                            product: scan.productName,
-                            risk: scan.riskLevel,
+                            scan: scan,
                             color: _getRiskColor(scan.riskLevel),
-                            onTap: () {
-                              context.push('/scan-detail', extra: scan);
-                            },
+                            onTap: () => context.push('/result', extra: scan),
                           );
                         },
                       ),
@@ -138,34 +207,24 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  /// Risk Color Mapper
   Color _getRiskColor(String risk) {
     switch (risk) {
       case 'Safe':
         return AppColors.safe;
-      case 'Caution':
-        return AppColors.caution;
       case 'Risky':
         return AppColors.danger;
       default:
-        return Colors.grey;
+        return AppColors.caution;
     }
   }
 }
 
-/// Updated Card with tap support
 class _RecentScanCard extends StatelessWidget {
-  final String product;
-  final String risk;
+  final ScanResult scan;
   final Color color;
   final VoidCallback? onTap;
 
-  const _RecentScanCard({
-    required this.product,
-    required this.risk,
-    required this.color,
-    this.onTap,
-  });
+  const _RecentScanCard({required this.scan, required this.color, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -174,18 +233,26 @@ class _RecentScanCard extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         leading: CircleAvatar(
-          backgroundColor: color.withOpacity(0.15),
+          backgroundColor: color.withValues(alpha: 0.15),
           child: Icon(Icons.inventory_2, color: color),
         ),
-        title: Text(product),
+        title: Text(
+          scan.productName,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Text(
+          '${scan.ingredients.length} ingredients detected',
+          style: const TextStyle(fontSize: 12),
+        ),
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.15),
+            color: color.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
-            risk,
+            scan.riskLevel,
             style: TextStyle(color: color, fontWeight: FontWeight.bold),
           ),
         ),

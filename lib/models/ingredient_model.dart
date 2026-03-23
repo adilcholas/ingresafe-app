@@ -1,10 +1,14 @@
 class IngredientModel {
   final String name;
-  final String riskLevel; // Safe, Caution, Risky
+  final String riskLevel; // Safe | Caution | Risky
   final String description;
   final String detailedExplanation;
   final String userImpact;
   final String regulatoryNote;
+
+  /// Used for personalized health-profile matching
+  final String? allergenKey;
+  final String? conditionKey;
 
   IngredientModel({
     required this.name,
@@ -13,5 +17,7 @@ class IngredientModel {
     required this.detailedExplanation,
     required this.userImpact,
     required this.regulatoryNote,
+    this.allergenKey,
+    this.conditionKey,
   });
 }

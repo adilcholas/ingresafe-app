@@ -5,10 +5,7 @@ import '../utils/theme_constants.dart';
 class IngredientDetailScreen extends StatelessWidget {
   final IngredientModel ingredient;
 
-  const IngredientDetailScreen({
-    super.key,
-    required this.ingredient,
-  });
+  const IngredientDetailScreen({super.key, required this.ingredient});
 
   Color _getRiskColor(String risk) {
     switch (risk.toLowerCase()) {
@@ -28,9 +25,7 @@ class IngredientDetailScreen extends StatelessWidget {
     final riskColor = _getRiskColor(ingredient.riskLevel);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Ingredient Analysis"),
-      ),
+      appBar: AppBar(title: const Text("Ingredient Analysis")),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: ListView(
@@ -39,7 +34,7 @@ class IngredientDetailScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: riskColor.withOpacity(0.1),
+                color: riskColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Column(
@@ -47,8 +42,11 @@ class IngredientDetailScreen extends StatelessWidget {
                   CircleAvatar(
                     radius: 36,
                     backgroundColor: riskColor,
-                    child: const Icon(Icons.science,
-                        color: Colors.white, size: 32),
+                    child: const Icon(
+                      Icons.science,
+                      color: Colors.white,
+                      size: 32,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -103,13 +101,12 @@ class IngredientDetailScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.danger.withOpacity(0.08),
+                color: AppColors.danger.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.person_outline,
-                      color: AppColors.danger),
+                  const Icon(Icons.person_outline, color: AppColors.danger),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(

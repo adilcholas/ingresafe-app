@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ingresafe/providers/scan_provider.dart';
 import 'package:ingresafe/widgets/common/ai_loader.dart';
-import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import '../utils/theme_constants.dart';
 
 class ProcessingScreen extends StatefulWidget {
@@ -12,16 +13,40 @@ class ProcessingScreen extends StatefulWidget {
 }
 
 class _ProcessingScreenState extends State<ProcessingScreen> {
+  bool _navigated = false;
+
   @override
   void initState() {
     super.initState();
-    _simulateAnalysis();
+    // Listen AFTER first frame so Provider is available
+    WidgetsBinding.instance.addPostFrameCallback((_) => _watchProcessing());
   }
 
-  Future<void> _simulateAnalysis() async {
-    await Future.delayed(const Duration(seconds: 3));
-    if (mounted) {
-      context.go('/result');
+  void _watchProcessing() {
+    final provider = context.read<ScanProvider>();
+
+    // If processing already done (e.g. very fast), navigate immediately
+    if (!provider.isProcessing) {
+      _goToResult(provider);
+      return;
+    }
+
+    // Otherwise listen for completion
+    provider.addListener(() {
+      if (mounted && !provider.isProcessing && !_navigated) {
+        _goToResult(provider);
+      }
+    });
+  }
+
+  void _goToResult(ScanProvider provider) {
+    if (_navigated) return;
+    _navigated = true;
+
+    if (provider.errorMessage != null || provider.currentScan == null) {
+      context.go('/error');
+    } else {
+      context.go('/result', extra: provider.currentScan);
     }
   }
 
@@ -39,14 +64,14 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
               const SizedBox(height: 30),
 
               const Text(
-                "Analyzing Ingredients...",
+                'Analyzing Ingredients...',
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
 
               const SizedBox(height: 12),
 
               const Text(
-                "AI + Safety Engine is evaluating the product label",
+                'AI + Safety Engine is evaluating the product label',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.grey),
               ),
@@ -54,9 +79,9 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
               const SizedBox(height: 40),
 
               /// Analysis Steps UX
-              const _AnalysisStep(text: "Extracting Ingredients (OCR)"),
-              const _AnalysisStep(text: "Matching Safety Database"),
-              const _AnalysisStep(text: "Generating Risk Score"),
+              const _AnalysisStep(text: 'Extracting Ingredients (OCR)'),
+              const _AnalysisStep(text: 'Matching Safety Database'),
+              const _AnalysisStep(text: 'Generating Risk Score'),
             ],
           ),
         ),
@@ -72,7 +97,7 @@ class _AnalysisStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: const Icon(Icons.check_circle_outline),
+      leading: const Icon(Icons.check_circle_outline, color: AppColors.primary),
       title: Text(text),
     );
   }

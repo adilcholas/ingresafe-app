@@ -1,58 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ingresafe/models/scan_result.dart';
+import 'package:ingresafe/providers/scan_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/scan_provider.dart';
 import '../utils/theme_constants.dart';
 
 class CompareScreen extends StatelessWidget {
-  const CompareScreen({super.key});
+  /// The scan passed via route extra (preferred). Falls back to latest scan.
+  final ScanResult? scan;
+
+  const CompareScreen({super.key, this.scan});
 
   @override
   Widget build(BuildContext context) {
-    final scanProvider = context.watch<ScanProvider>();
+    final scanResult =
+        scan ?? context.read<ScanProvider>().recentScans.firstOrNull;
 
-    final scan = scanProvider.recentScans.isNotEmpty
-        ? scanProvider.recentScans.first
-        : null;
-
-    if (scan == null) {
+    if (scanResult == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text("Compare Ingredients")),
+        appBar: AppBar(title: const Text('Compare Ingredients')),
         body: const Center(
           child: Text(
-            "No scan available to compare.",
+            'No scan available to compare.',
             style: TextStyle(color: Colors.grey),
           ),
         ),
       );
     }
 
-    final alternative = _getAlternative(scan.extractedText);
+    final alternative = _getBestAlternative(scanResult);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Compare Ingredients")),
+      appBar: AppBar(title: const Text('Compare Ingredients')),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            /// Product vs Alternative
+            /// ── Product vs Alternative ─────────────────────────────────────
             Row(
               children: [
                 Expanded(
                   child: _CompareCard(
-                    title: "Scanned Product",
-                    productName: scan.productName,
-                    risk: scan.riskLevel,
-                    color: _getRiskColor(scan.riskLevel),
+                    title: 'Scanned Product',
+                    productName: scanResult.productName,
+                    risk: scanResult.riskLevel,
+                    color: _riskColor(scanResult.riskLevel),
                   ),
                 ),
-                const SizedBox(width: 12),
-                const Icon(Icons.compare_arrows),
-                const SizedBox(width: 12),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Icon(Icons.compare_arrows, size: 28),
+                ),
                 Expanded(
                   child: _CompareCard(
-                    title: "Better Alternative",
+                    title: 'Better Alternative',
                     productName: alternative.name,
                     risk: alternative.safety,
                     color: alternative.color,
@@ -63,11 +65,11 @@ class CompareScreen extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            /// Insight Section
+            /// ── AI Insight ─────────────────────────────────────────────────
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.08),
+                color: AppColors.primary.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
@@ -76,7 +78,7 @@ class CompareScreen extends StatelessWidget {
                   SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      "The alternative has fewer harmful ingredients and aligns better with your health profile.",
+                      'The alternative has fewer harmful ingredients and aligns better with your health profile.',
                     ),
                   ),
                 ],
@@ -85,38 +87,27 @@ class CompareScreen extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            /// Ingredient Breakdown
-            Expanded(
-              child: ListView(
-                children: [
-                  _ComparisonRow(
-                    label: "Artificial Additives",
-                    original: "Present",
-                    alternative: "Absent",
-                    isBetter: true,
-                  ),
-                  _ComparisonRow(
-                    label: "Sugar Level",
-                    original: "High",
-                    alternative: "Reduced",
-                    isBetter: true,
-                  ),
-                  _ComparisonRow(
-                    label: "Allergen Risk",
-                    original: "Medium",
-                    alternative: "Low",
-                    isBetter: true,
-                  ),
-                ],
+            /// ── Ingredient Comparison Table ─────────────────────────────────
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Ingredient Comparison (${scanResult.ingredients.length} detected)',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
+            const SizedBox(height: 12),
 
-            /// Action Button
+            Expanded(child: _buildComparisonTable(scanResult)),
+
+            /// ── Done Button ─────────────────────────────────────────────────
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () => context.pop(),
-                child: const Text("Done"),
+                child: const Text('Done'),
               ),
             ),
           ],
@@ -125,48 +116,78 @@ class CompareScreen extends StatelessWidget {
     );
   }
 
-  /// Dummy alternative (aligned with previous logic)
-  _Alt _getAlternative(String text) {
-    final lower = text.toLowerCase();
-
-    if (lower.contains("sugar")) {
-      return _Alt(
-        name: "Low Sugar Organic Spread",
-        safety: "Better",
-        color: AppColors.caution,
+  Widget _buildComparisonTable(ScanResult scanResult) {
+    if (scanResult.ingredients.isEmpty) {
+      return const Center(
+        child: Text(
+          'No ingredients to compare.',
+          style: TextStyle(color: Colors.grey),
+        ),
       );
     }
 
-    if (lower.contains("milk")) {
+    return ListView.builder(
+      itemCount: scanResult.ingredients.length,
+      itemBuilder: (context, index) {
+        final ing = scanResult.ingredients[index];
+        final isBetter = ing.riskLevel == 'Safe';
+        final originalValue = ing.riskLevel;
+        final alternativeValue = isBetter ? 'Safe' : 'Reduced / Absent';
+
+        return _ComparisonRow(
+          label: ing.name,
+          original: originalValue,
+          alternative: alternativeValue,
+          isBetter: isBetter,
+        );
+      },
+    );
+  }
+
+  _Alt _getBestAlternative(ScanResult result) {
+    final names = result.ingredients.map((i) => i.name.toLowerCase()).toSet();
+
+    if (names.any((n) => n.contains('milk') || n.contains('lactose'))) {
       return _Alt(
-        name: "Dairy-Free Vegan Spread",
-        safety: "Safer",
+        name: 'Dairy-Free Vegan Alternative',
+        safety: 'Safer',
         color: AppColors.safe,
       );
     }
-
+    if (names.any((n) => n.contains('sugar') || n.contains('fructose'))) {
+      return _Alt(
+        name: 'Low Sugar Organic Option',
+        safety: 'Better',
+        color: AppColors.caution,
+      );
+    }
+    if (names.any((n) => n.contains('gluten') || n.contains('wheat'))) {
+      return _Alt(
+        name: 'Gluten-Free Alternative',
+        safety: 'Safe',
+        color: AppColors.safe,
+      );
+    }
     return _Alt(
-      name: "Clean Ingredient Product",
-      safety: "Safe",
+      name: 'Clean Ingredient Product',
+      safety: 'Safe',
       color: AppColors.safe,
     );
   }
 
-  Color _getRiskColor(String risk) {
+  Color _riskColor(String risk) {
     switch (risk) {
       case 'Safe':
         return AppColors.safe;
-      case 'Caution':
-        return AppColors.caution;
       case 'Risky':
         return AppColors.danger;
       default:
-        return Colors.grey;
+        return AppColors.caution;
     }
   }
 }
 
-/// Compare Card
+// ─────────────────────────────────────────────────────────────────────────────
 class _CompareCard extends StatelessWidget {
   final String title;
   final String productName;
@@ -185,19 +206,28 @@ class _CompareCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(height: 10),
-          Text(productName, textAlign: TextAlign.center),
+          Text(
+            productName,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
           const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.15),
+              color: color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -211,7 +241,7 @@ class _CompareCard extends StatelessWidget {
   }
 }
 
-/// Comparison Row
+// ─────────────────────────────────────────────────────────────────────────────
 class _ComparisonRow extends StatelessWidget {
   final String label;
   final String original;
@@ -228,23 +258,27 @@ class _ComparisonRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(label),
+      title: Text(label, style: const TextStyle(fontSize: 14)),
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(original, style: const TextStyle(color: Colors.red)),
-          Text(alternative, style: const TextStyle(color: Colors.green)),
+          Text(
+            original,
+            style: TextStyle(
+              color: isBetter ? AppColors.safe : AppColors.danger,
+            ),
+          ),
+          Text(alternative, style: const TextStyle(color: AppColors.safe)),
         ],
       ),
       trailing: Icon(
-        isBetter ? Icons.check_circle : Icons.warning,
-        color: isBetter ? Colors.green : Colors.orange,
+        isBetter ? Icons.check_circle : Icons.swap_horiz,
+        color: isBetter ? AppColors.safe : AppColors.caution,
       ),
     );
   }
 }
 
-/// Internal model
 class _Alt {
   final String name;
   final String safety;

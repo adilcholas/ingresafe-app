@@ -23,7 +23,7 @@ class SelectableChip extends StatelessWidget {
         margin: const EdgeInsets.only(right: 10, bottom: 10),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.primary.withOpacity(0.15)
+              ? AppColors.primary.withValues(alpha: 0.15)
               : Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(30),
           border: Border.all(

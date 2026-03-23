@@ -137,12 +137,22 @@ class HealthProfileScreen extends StatelessWidget {
                   PrimaryButton(
                     text: "Save & Continue",
                     onPressed: () {
-                      context.go('/home');
+                      if (context.canPop()) {
+                        context.pop();
+                      } else {
+                        context.go('/home');
+                      }
                     },
                   ),
                   const SizedBox(height: 12),
                   TextButton(
-                    onPressed: () => context.go('/home'),
+                    onPressed: () {
+                      if (context.canPop()) {
+                        context.pop();
+                      } else {
+                        context.go('/home');
+                      }
+                    },
                     child: const Text("Skip for Now"),
                   ),
                 ],
