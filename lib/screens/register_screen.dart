@@ -63,8 +63,11 @@ class _RegisterScreenState extends State<RegisterScreen>
     );
 
     if (success && mounted) {
-      // Mark onboarding complete since they registered fresh
-      context.go('/health-profile');
+      // Go to home first, then push health-profile to keep home in back stack
+      context.go('/home');
+      Future.microtask(() {
+        if (mounted) context.push('/health-profile');
+      });
     }
   }
 

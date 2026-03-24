@@ -44,9 +44,9 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
     _navigated = true;
 
     if (provider.errorMessage != null || provider.currentScan == null) {
-      context.go('/error');
+      context.pushReplacement('/error');
     } else {
-      context.go('/result', extra: provider.currentScan);
+      context.pushReplacement('/result', extra: provider.currentScan);
     }
   }
 

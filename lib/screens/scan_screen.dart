@@ -100,11 +100,11 @@ class ScanScreen extends StatelessWidget {
       await context.read<ScanProvider>().processImage(file);
 
       if (context.mounted) {
-        context.go('/processing');
+        context.pushReplacement('/processing');
       }
     } else {
       if (context.mounted) {
-        context.go('/error');
+        context.pushReplacement('/error');
       }
     }
   }
@@ -117,11 +117,11 @@ class ScanScreen extends StatelessWidget {
       await context.read<ScanProvider>().processImage(file);
 
       if (context.mounted) {
-        context.go('/processing');
+        context.pushReplacement('/processing');
       }
     } else {
       if (context.mounted) {
-        context.go('/error');
+        context.pushReplacement('/error');
       }
     }
   }
