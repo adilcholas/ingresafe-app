@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:ingresafe/data/services/ingredient_data_service.dart';
+import 'package:ingresafe/data/services/scan_history_service.dart';
 import 'package:ingresafe/models/ingredient_model.dart';
 import 'package:ingresafe/models/scan_result.dart';
 import '../utils/ocr_service.dart';
@@ -12,6 +13,7 @@ class ScanProvider with ChangeNotifier {
   File? _image;
   String _extractedText = '';
   bool _isProcessing = false;
+  bool _isLoadingHistory = false;
   ScanResult? _currentScan;
   String? _errorMessage;
   bool _isSeeded = false;
@@ -21,11 +23,32 @@ class ScanProvider with ChangeNotifier {
   File? get image => _image;
   String get extractedText => _extractedText;
   bool get isProcessing => _isProcessing;
+  bool get isLoadingHistory => _isLoadingHistory;
   ScanResult? get currentScan => _currentScan;
   String? get errorMessage => _errorMessage;
   List<ScanResult> get recentScans => List.unmodifiable(_recentScans);
 
   final OcrService _ocrService = OcrService();
+
+  ScanProvider() {
+    _init();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Initialization — load history from Firestore
+  // ---------------------------------------------------------------------------
+  Future<void> _init() async {
+    _isLoadingHistory = true;
+    notifyListeners();
+
+    final history = await ScanHistoryService.loadHistory();
+    _recentScans
+      ..clear()
+      ..addAll(history);
+
+    _isLoadingHistory = false;
+    notifyListeners();
+  }
 
   // ---------------------------------------------------------------------------
   // Seed Firestore with ingredient + alternatives database
@@ -53,8 +76,11 @@ class ScanProvider with ChangeNotifier {
       _extractedText = text;
 
       final result = await _buildScanResult(text);
-      _currentScan = result;
-      _recentScans.insert(0, result);
+
+      // Persist to Firestore and get back the doc-ID-enriched result
+      final saved = await ScanHistoryService.saveScan(result);
+      _currentScan = saved;
+      _recentScans.insert(0, saved);
     } catch (e) {
       _errorMessage = e.toString();
       debugPrint('Scan error: $e');
@@ -78,7 +104,6 @@ class ScanProvider with ChangeNotifier {
 
       final ingredients = IngredientDataService.getDemoIngredients();
 
-      // Override risk: worst of all
       String overallRisk = 'Safe';
       for (final ing in ingredients) {
         if (ing.riskLevel == 'Risky') {
@@ -103,8 +128,10 @@ class ScanProvider with ChangeNotifier {
             .toList(),
       );
 
-      _currentScan = result;
-      _recentScans.insert(0, result);
+      // Persist to Firestore
+      final saved = await ScanHistoryService.saveScan(result);
+      _currentScan = saved;
+      _recentScans.insert(0, saved);
     } catch (e) {
       _errorMessage = e.toString();
       debugPrint('Demo scan error: $e');
@@ -115,12 +142,11 @@ class ScanProvider with ChangeNotifier {
   }
 
   // ---------------------------------------------------------------------------
-  // Build scan result from OCR text (with Firestore-backed ingredient service)
+  // Build scan result from OCR text (Firestore-backed ingredient service)
   // ---------------------------------------------------------------------------
   Future<ScanResult> _buildScanResult(String text) async {
     final ingredients = await IngredientDataService.parseIngredientsFromText(text);
 
-    // Overall risk: worst of all ingredients
     String overallRisk = 'Safe';
     for (final ing in ingredients) {
       if (ing.riskLevel == 'Risky') {
@@ -159,10 +185,27 @@ class ScanProvider with ChangeNotifier {
   // ---------------------------------------------------------------------------
   // Helpers
   // ---------------------------------------------------------------------------
-  void clearScans() {
+
+  /// Reloads scan history from Firestore (e.g. after deleting a single entry).
+  Future<void> reloadHistory() async {
+    _isLoadingHistory = true;
+    notifyListeners();
+
+    final history = await ScanHistoryService.loadHistory();
+    _recentScans
+      ..clear()
+      ..addAll(history);
+
+    _isLoadingHistory = false;
+    notifyListeners();
+  }
+
+  /// Clears local list and removes all Firestore history.
+  Future<void> clearScans() async {
     _recentScans.clear();
     _currentScan = null;
     notifyListeners();
+    await ScanHistoryService.clearHistory();
   }
 
   void disposeService() {
