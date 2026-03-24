@@ -45,6 +45,11 @@ class _AppShellState extends State<AppShell> {
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
         
+        if (currentIndex != 0) {
+          context.go('/home');
+          return;
+        }
+
         final now = DateTime.now();
         if (_lastPressedAt == null || 
             now.difference(_lastPressedAt!) > const Duration(seconds: 2)) {

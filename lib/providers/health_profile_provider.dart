@@ -6,6 +6,11 @@ class HealthProfileProvider with ChangeNotifier {
 
   HealthProfileModel get profile => _profile;
 
+  void setProfile(HealthProfileModel profile) {
+    _profile = profile;
+    notifyListeners();
+  }
+
   void toggleAllergy(String allergy) {
     final updatedList = List<String>.from(_profile.allergies);
 

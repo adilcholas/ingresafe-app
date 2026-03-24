@@ -47,8 +47,15 @@ class ResultScreen extends StatelessWidget {
       return matchesAllergen || matchesCondition;
     }).toList();
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Analysis Result')),
+    return PopScope(
+      canPop: context.canPop(),
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          context.go('/home');
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Analysis Result')),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -176,7 +183,7 @@ class ResultScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 
   Color _riskColor(String risk) {

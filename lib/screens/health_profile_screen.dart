@@ -7,8 +7,24 @@ import '../utils/app_spacing.dart';
 import '../widgets/common/primary_button.dart';
 import '../widgets/common/selectable_chip.dart';
 
-class HealthProfileScreen extends StatelessWidget {
+class HealthProfileScreen extends StatefulWidget {
   const HealthProfileScreen({super.key});
+
+  @override
+  State<HealthProfileScreen> createState() => _HealthProfileScreenState();
+}
+
+class _HealthProfileScreenState extends State<HealthProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userProv = context.read<UserProvider>();
+      if (userProv.isAuthenticated) {
+        context.read<HealthProfileProvider>().setProfile(userProv.healthProfile);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +56,15 @@ class HealthProfileScreen extends StatelessWidget {
       "Heart Condition",
     ];
 
-    return Scaffold(
-      appBar: AppBar(title: const Text("Health Profile")),
+    return PopScope(
+      canPop: context.canPop(),
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          context.go('/home');
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(title: const Text("Health Profile")),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.screenPadding),
@@ -167,6 +190,6 @@ class HealthProfileScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 }
