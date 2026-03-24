@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/health_profile_provider.dart';
+import '../providers/user_provider.dart';
 import '../utils/app_spacing.dart';
 import '../widgets/common/primary_button.dart';
 import '../widgets/common/selectable_chip.dart';
@@ -137,6 +138,11 @@ class HealthProfileScreen extends StatelessWidget {
                   PrimaryButton(
                     text: "Save & Continue",
                     onPressed: () {
+                      // Sync health profile to Firestore if user is signed in
+                      final userProv = context.read<UserProvider>();
+                      if (userProv.isAuthenticated) {
+                        userProv.updateHealthProfileLocally(provider.profile);
+                      }
                       if (context.canPop()) {
                         context.pop();
                       } else {

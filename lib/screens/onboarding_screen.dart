@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../data/services/auth_service.dart';
 import '../utils/app_spacing.dart';
 import '../utils/theme_constants.dart';
 import '../widgets/common/primary_button.dart';
@@ -35,14 +36,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     },
   ];
 
-  void nextPage() {
+  Future<void> nextPage() async {
     if (currentIndex < onboardingData.length - 1) {
       _controller.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     } else {
-      context.go('/health-profile');
+      await AuthService.markOnboardingComplete();
+      if (mounted) context.go('/login');
     }
   }
 
@@ -59,7 +61,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             Align(
               alignment: Alignment.topRight,
               child: TextButton(
-                onPressed: () => context.go('/health-profile'),
+                onPressed: () async {
+                  await AuthService.markOnboardingComplete();
+                  if (mounted) context.go('/login');
+                },
                 child: const Text("Skip"),
               ),
             ),

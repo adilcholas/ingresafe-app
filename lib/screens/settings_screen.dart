@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/health_profile_provider.dart';
 import '../providers/scan_provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/user_provider.dart';
 import '../utils/theme_constants.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -13,6 +14,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = context.watch<ThemeProvider>();
     final healthProfile = context.watch<HealthProfileProvider>().profile;
+    final userProvider = context.watch<UserProvider>();
 
     final allergiesCount = healthProfile.allergies.length;
     final dietsCount = healthProfile.dietaryPreferences.length;
@@ -22,6 +24,20 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Settings')),
       body: ListView(
         children: [
+          /// ── Account Section ──────────────────────────────────────────────
+          _SectionHeader(title: 'Account'),
+          _AccountTile(userProvider: userProvider),
+          ListTile(
+            leading: const Icon(Icons.logout, color: AppColors.danger),
+            title: const Text(
+              'Sign Out',
+              style: TextStyle(color: AppColors.danger),
+            ),
+            onTap: () => _confirmSignOut(context),
+          ),
+
+          const Divider(),
+
           /// ── Appearance Section ───────────────────────────────────────────
           _SectionHeader(title: 'Appearance'),
           SwitchListTile(
@@ -89,9 +105,10 @@ class SettingsScreen extends StatelessWidget {
                 builder: (ctx) => AlertDialog(
                   title: const Text('Privacy Policy'),
                   content: const Text(
-                    'IngreSafe processes all images locally on your device using Google ML Kit. '
-                    'No images or personal data are uploaded to any server.\n\n'
-                    'Your health profile data is stored only on this device.',
+                    'IngreSafe processes images locally on your device using Google ML Kit. '
+                    'Scan history is securely stored in Firebase Firestore, '
+                    'linked to your account.\n\n'
+                    'Your health profile is encrypted and persisted per user account.',
                   ),
                   actions: [
                     TextButton(
@@ -117,6 +134,31 @@ class SettingsScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _confirmSignOut(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Sign Out?'),
+        content: const Text('You will need to sign in again to access your data.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Sign Out', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      await context.read<UserProvider>().signOut();
+      // Router redirect handles navigation to /login
+    }
   }
 
   Future<void> _confirmClearData(BuildContext context) async {
@@ -149,6 +191,77 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Account Tile — shows avatar, name, email
+// ─────────────────────────────────────────────────────────────────────────────
+class _AccountTile extends StatelessWidget {
+  final UserProvider userProvider;
+  const _AccountTile({required this.userProvider});
+
+  @override
+  Widget build(BuildContext context) {
+    final initial = userProvider.displayName.isNotEmpty
+        ? userProvider.displayName[0].toUpperCase()
+        : '?';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 26,
+            backgroundColor: AppColors.primary.withValues(alpha: 0.15),
+            child: Text(
+              initial,
+              style: const TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  userProvider.displayName,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  userProvider.email,
+                  style: const TextStyle(color: Colors.grey, fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: AppColors.safe.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Text(
+              'Active',
+              style: TextStyle(
+                color: AppColors.safe,
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 class _SectionHeader extends StatelessWidget {
   final String title;
   const _SectionHeader({required this.title});
@@ -159,7 +272,7 @@ class _SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 4),
       child: Text(
         title.toUpperCase(),
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
           color: AppColors.primary,

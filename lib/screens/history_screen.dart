@@ -104,7 +104,7 @@ class HistoryScreen extends StatelessWidget {
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
       itemCount: 6,
-      itemBuilder: (_, _x) => _ShimmerCard(),
+      itemBuilder: (ctx, i) => _ShimmerCard(),
     );
   }
 
@@ -419,7 +419,7 @@ class _ShimmerCardState extends State<_ShimmerCard>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _anim,
-      builder: (_, _x) => Card(
+      builder: (ctx, child) => Card(
         margin: const EdgeInsets.only(bottom: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(

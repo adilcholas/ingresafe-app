@@ -5,6 +5,7 @@ import 'package:ingresafe/firebase_options.dart';
 import 'package:ingresafe/providers/health_profile_provider.dart';
 import 'package:ingresafe/providers/scan_provider.dart';
 import 'package:ingresafe/providers/theme_provider.dart';
+import 'package:ingresafe/providers/user_provider.dart';
 import 'package:ingresafe/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'providers/app_provider.dart';
@@ -27,18 +28,19 @@ class IngreSafeApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AppProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => HealthProfileProvider()),
         ChangeNotifierProvider(create: (_) => ScanProvider()),
       ],
-      child: Consumer<ThemeProvider>(
-        builder: (context, themeProvider, child) {
+      child: Consumer2<ThemeProvider, UserProvider>(
+        builder: (context, themeProvider, userProvider, child) {
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
             title: 'IngreSafe',
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeProvider.themeMode,
-            routerConfig: AppRouter.router,
+            routerConfig: AppRouter.buildRouter(userProvider),
           );
         },
       ),

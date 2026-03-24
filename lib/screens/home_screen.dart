@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../models/scan_result.dart';
 import '../providers/health_profile_provider.dart';
 import '../providers/scan_provider.dart';
+import '../providers/user_provider.dart';
 import '../utils/app_spacing.dart';
 import '../utils/theme_constants.dart';
 
@@ -24,6 +25,8 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final scanProvider = context.watch<ScanProvider>();
     final healthProfile = context.watch<HealthProfileProvider>().profile;
+    final userProvider = context.watch<UserProvider>();
+    final userName = userProvider.displayName;
 
     // Greeting based on health profile completeness
     final hasProfile =
@@ -50,9 +53,9 @@ class HomeScreen extends StatelessWidget {
                         style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                       const SizedBox(height: 4),
-                      const Text(
-                        'Stay Safe with IngreSafe',
-                        style: TextStyle(
+                      Text(
+                        'Hi, $userName',
+                        style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
