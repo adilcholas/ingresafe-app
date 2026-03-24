@@ -25,11 +25,12 @@ class ScanHistoryService {
 
   // ── Load ───────────────────────────────────────────────────────────────────
 
-  /// Loads the most recent [limit] scans, ordered newest-first.
-  static Future<List<ScanResult>> loadHistory({int limit = 50}) async {
+  /// Loads the most recent [limit] scans, ordered newest-first for a specific user.
+  static Future<List<ScanResult>> loadHistory(String userId, {int limit = 50}) async {
     try {
       final snap = await _db
           .collection(_collection)
+          .where('userId', isEqualTo: userId)
           .orderBy('scannedAt', descending: true)
           .limit(limit)
           .get();
@@ -58,10 +59,10 @@ class ScanHistoryService {
     }
   }
 
-  /// Clears **all** scan history documents for the current user.
-  static Future<void> clearHistory() async {
+  /// Clears **all** scan history documents for the given user.
+  static Future<void> clearHistory(String userId) async {
     try {
-      final snap = await _db.collection(_collection).get();
+      final snap = await _db.collection(_collection).where('userId', isEqualTo: userId).get();
       final batch = _db.batch();
       for (final doc in snap.docs) {
         batch.delete(doc.reference);

@@ -30,24 +30,21 @@ class ScanProvider with ChangeNotifier {
 
   final OcrService _ocrService = OcrService();
 
-  ScanProvider() {
-    _init();
-  }
+  String? _userId;
 
-  // ---------------------------------------------------------------------------
-  // Initialization — load history from Firestore
-  // ---------------------------------------------------------------------------
-  Future<void> _init() async {
-    _isLoadingHistory = true;
-    notifyListeners();
+  ScanProvider();
 
-    final history = await ScanHistoryService.loadHistory();
-    _recentScans
-      ..clear()
-      ..addAll(history);
-
-    _isLoadingHistory = false;
-    notifyListeners();
+  void updateUser(String? userId) {
+    if (_userId == userId) return;
+    _userId = userId;
+    
+    if (_userId == null) {
+      _recentScans.clear();
+      _currentScan = null;
+      notifyListeners();
+    } else {
+      reloadHistory();
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -76,9 +73,10 @@ class ScanProvider with ChangeNotifier {
       _extractedText = text;
 
       final result = await _buildScanResult(text);
+      final resultWithUser = result.copyWith(userId: _userId);
 
       // Persist to Firestore and get back the doc-ID-enriched result
-      final saved = await ScanHistoryService.saveScan(result);
+      final saved = await ScanHistoryService.saveScan(resultWithUser);
       _currentScan = saved;
       _recentScans.insert(0, saved);
     } catch (e) {
@@ -114,6 +112,7 @@ class ScanProvider with ChangeNotifier {
       }
 
       final result = ScanResult(
+        userId: _userId,
         productName: 'Demo Cookie Biscuit — Chocolate Cream',
         extractedText:
             'Ingredients: Sugar, High Fructose Corn Syrup, Wheat Flour, '
@@ -188,10 +187,12 @@ class ScanProvider with ChangeNotifier {
 
   /// Reloads scan history from Firestore (e.g. after deleting a single entry).
   Future<void> reloadHistory() async {
+    if (_userId == null) return;
+    
     _isLoadingHistory = true;
     notifyListeners();
 
-    final history = await ScanHistoryService.loadHistory();
+    final history = await ScanHistoryService.loadHistory(_userId!);
     _recentScans
       ..clear()
       ..addAll(history);
@@ -200,12 +201,14 @@ class ScanProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  /// Clears local list and removes all Firestore history.
+  /// Clears local list and removes all Firestore history for the current user.
   Future<void> clearScans() async {
+    if (_userId == null) return;
+    
     _recentScans.clear();
     _currentScan = null;
     notifyListeners();
-    await ScanHistoryService.clearHistory();
+    await ScanHistoryService.clearHistory(_userId!);
   }
 
   void disposeService() {

@@ -3,6 +3,7 @@ import 'ingredient_model.dart';
 
 class ScanResult {
   final String? firestoreId; // null until persisted
+  final String? userId; // The ID of the user who owns this scan
   final String productName;
   final String extractedText;
   final String riskLevel;
@@ -12,6 +13,7 @@ class ScanResult {
 
   ScanResult({
     this.firestoreId,
+    this.userId,
     required this.productName,
     required this.extractedText,
     required this.riskLevel,
@@ -20,8 +22,9 @@ class ScanResult {
     this.warnings = const [],
   });
 
-  ScanResult copyWith({String? firestoreId}) => ScanResult(
+  ScanResult copyWith({String? firestoreId, String? userId}) => ScanResult(
         firestoreId: firestoreId ?? this.firestoreId,
+        userId: userId ?? this.userId,
         productName: productName,
         extractedText: extractedText,
         riskLevel: riskLevel,
@@ -31,6 +34,7 @@ class ScanResult {
       );
 
   Map<String, dynamic> toMap() => {
+        'userId': userId,
         'productName': productName,
         'extractedText': extractedText,
         'riskLevel': riskLevel,
@@ -55,6 +59,7 @@ class ScanResult {
 
     return ScanResult(
       firestoreId: id,
+      userId: map['userId'] as String?,
       productName: map['productName'] as String? ?? 'Unknown Product',
       extractedText: map['extractedText'] as String? ?? '',
       riskLevel: map['riskLevel'] as String? ?? 'Caution',

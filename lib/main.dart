@@ -30,7 +30,11 @@ class IngreSafeApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => HealthProfileProvider()),
-        ChangeNotifierProvider(create: (_) => ScanProvider()),
+        ChangeNotifierProxyProvider<UserProvider, ScanProvider>(
+          create: (_) => ScanProvider(),
+          update: (_, userProvider, previous) =>
+              (previous ?? ScanProvider())..updateUser(userProvider.user?.uid),
+        ),
       ],
       child: Consumer2<ThemeProvider, UserProvider>(
         builder: (context, themeProvider, userProvider, child) {
