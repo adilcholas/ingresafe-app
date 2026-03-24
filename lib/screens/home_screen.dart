@@ -8,6 +8,15 @@ import '../providers/scan_provider.dart';
 import '../utils/app_spacing.dart';
 import '../utils/theme_constants.dart';
 
+Future<void> _runDemoScan(BuildContext context) async {
+  final provider = context.read<ScanProvider>();
+  // Start demo scan (non-blocking: navigate immediately, processing screen watches)
+  provider.loadDemoScan();
+  if (context.mounted) {
+    context.push('/processing');
+  }
+}
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -141,6 +150,64 @@ class HomeScreen extends StatelessWidget {
                         Icons.arrow_forward_ios,
                         size: 16,
                         color: AppColors.primary,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              /// ── Demo Scan Card ─────────────────────────────────────────────
+              GestureDetector(
+                onTap: () => _runDemoScan(context),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 14,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.safe.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: AppColors.safe.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.play_circle_outline,
+                        size: 28,
+                        color: AppColors.safe,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              'Try Demo Scan',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.safe,
+                              ),
+                            ),
+                            SizedBox(height: 2),
+                            Text(
+                              'Preview all features with a sample product',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 14,
+                        color: AppColors.safe,
                       ),
                     ],
                   ),
