@@ -36,229 +36,234 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.screenPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// ── Header ────────────────────────────────────────────────────
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Hello 👋',
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Hi, $userName',
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.screenPadding),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// ── Header ────────────────────────────────────────────────────
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Hello 👋',
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
                         ),
-                      ),
-                    ],
-                  ),
-                  CircleAvatar(
-                    backgroundColor: AppColors.primary.withValues(alpha: 0.15),
-                    child: IconButton(
-                      icon: const Icon(Icons.settings),
-                      onPressed: () => context.push('/settings'),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: AppSpacing.sectionGap),
-
-              /// ── Health Profile Alert (if not set) ─────────────────────────
-              if (!hasProfile)
-                GestureDetector(
-                  onTap: () => context.push('/health-profile'),
-                  child: Container(
-                    margin: const EdgeInsets.only(
-                      bottom: AppSpacing.sectionGap,
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.caution.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: AppColors.caution.withValues(alpha: 0.4),
-                      ),
-                    ),
-                    child: Row(
-                      children: const [
-                        Icon(
-                          Icons.warning_amber_rounded,
-                          color: AppColors.caution,
-                        ),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'Set up your health profile for personalized warnings',
-                            style: TextStyle(fontSize: 13),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Hi, $userName',
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Icon(
+                      ],
+                    ),
+                    CircleAvatar(
+                      backgroundColor: AppColors.primary.withValues(alpha: 0.15),
+                      child: IconButton(
+                        icon: const Icon(Icons.settings),
+                        onPressed: () => context.push('/settings'),
+                      ),
+                    ),
+                  ],
+                ),
+  
+                const SizedBox(height: AppSpacing.sectionGap),
+  
+                /// ── Health Profile Alert (if not set) ─────────────────────────
+                if (!hasProfile)
+                  GestureDetector(
+                    onTap: () => context.push('/health-profile'),
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        bottom: AppSpacing.sectionGap,
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: AppColors.caution.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: AppColors.caution.withValues(alpha: 0.4),
+                        ),
+                      ),
+                      child: Row(
+                        children: const [
+                          Icon(
+                            Icons.warning_amber_rounded,
+                            color: AppColors.caution,
+                          ),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'Set up your health profile for personalized warnings',
+                              style: TextStyle(fontSize: 13),
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 14,
+                            color: AppColors.caution,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+  
+                /// ── Hero Scan Card ─────────────────────────────────────────────
+                GestureDetector(
+                  onTap: () => context.push('/scan'),
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.qr_code_scanner,
+                          size: 40,
+                          color: AppColors.primary,
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text(
+                                'Scan a Product Label',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 6),
+                              Text(
+                                'Instant AI analysis of ingredients & safety risks',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(
                           Icons.arrow_forward_ios,
-                          size: 14,
-                          color: AppColors.caution,
+                          size: 16,
+                          color: AppColors.primary,
                         ),
                       ],
                     ),
                   ),
                 ),
-
-              /// ── Hero Scan Card ─────────────────────────────────────────────
-              GestureDetector(
-                onTap: () => context.push('/scan'),
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.qr_code_scanner,
-                        size: 40,
-                        color: AppColors.primary,
+  
+                const SizedBox(height: 12),
+  
+                /// ── Demo Scan Card ─────────────────────────────────────────────
+                GestureDetector(
+                  onTap: () => _runDemoScan(context),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 14,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.safe.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppColors.safe.withValues(alpha: 0.3),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              'Scan a Product Label',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 6),
-                            Text(
-                              'Instant AI analysis of ingredients & safety risks',
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          ],
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.play_circle_outline,
+                          size: 28,
+                          color: AppColors.safe,
                         ),
-                      ),
-                      const Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16,
-                        color: AppColors.primary,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              /// ── Demo Scan Card ─────────────────────────────────────────────
-              GestureDetector(
-                onTap: () => _runDemoScan(context),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 14,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.safe.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: AppColors.safe.withValues(alpha: 0.3),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text(
+                                'Try Demo Scan',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.safe,
+                                ),
+                              ),
+                              SizedBox(height: 2),
+                              Text(
+                                'Preview all features with a sample product',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(
+                          Icons.arrow_forward_ios,
+                          size: 14,
+                          color: AppColors.safe,
+                        ),
+                      ],
                     ),
                   ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.play_circle_outline,
-                        size: 28,
-                        color: AppColors.safe,
+                ),
+  
+                const SizedBox(height: AppSpacing.sectionGap),
+  
+                /// ── Recent Scans Title ─────────────────────────────────────────
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Recent Scans',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    if (scanProvider.recentScans.isNotEmpty)
+                      TextButton(
+                        onPressed: () => context.push('/history'),
+                        child: const Text('See All'),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              'Try Demo Scan',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.safe,
-                              ),
-                            ),
-                            SizedBox(height: 2),
-                            Text(
-                              'Preview all features with a sample product',
-                              style: TextStyle(
+                  ],
+                ),
+  
+                const SizedBox(height: 12),
+  
+                /// ── Recent Scans List ──────────────────────────────────────────
+                scanProvider.recentScans.isEmpty
+                    ? const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 32),
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.document_scanner_outlined,
+                                size: 60,
                                 color: Colors.grey,
-                                fontSize: 12,
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Icon(
-                        Icons.arrow_forward_ios,
-                        size: 14,
-                        color: AppColors.safe,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: AppSpacing.sectionGap),
-
-              /// ── Recent Scans Title ─────────────────────────────────────────
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Recent Scans',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  if (scanProvider.recentScans.isNotEmpty)
-                    TextButton(
-                      onPressed: () => context.push('/history'),
-                      child: const Text('See All'),
-                    ),
-                ],
-              ),
-
-              const SizedBox(height: 12),
-
-              /// ── Recent Scans List ──────────────────────────────────────────
-              Expanded(
-                child: scanProvider.recentScans.isEmpty
-                    ? const Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.document_scanner_outlined,
-                              size: 60,
-                              color: Colors.grey,
-                            ),
-                            SizedBox(height: 12),
-                            Text(
-                              'No scans yet.\nTap the camera button to start.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          ],
+                              SizedBox(height: 12),
+                              Text(
+                                'No scans yet.\nTap the camera button to start.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
                         ),
                       )
                     : ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: scanProvider.recentScans.length,
                         itemBuilder: (context, index) {
                           final scan = scanProvider.recentScans[index];
@@ -269,8 +274,8 @@ class HomeScreen extends StatelessWidget {
                           );
                         },
                       ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

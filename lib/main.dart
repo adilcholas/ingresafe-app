@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:ingresafe/data/services/ingredient_data_service.dart';
 import 'package:ingresafe/firebase_options.dart';
 import 'package:ingresafe/providers/health_profile_provider.dart';
 import 'package:ingresafe/providers/scan_provider.dart';
@@ -15,7 +14,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // Seed ingredient + alternatives dataset to Firestore (idempotent)
-  IngredientDataService.seedFirestore();
+  // Comment this out if datasets are already seeded to prevent permission errors
+  // IngredientDataService.seedFirestore();
   runApp(const IngreSafeApp());
 }
 
