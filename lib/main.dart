@@ -7,15 +7,21 @@ import 'package:ingresafe/providers/theme_provider.dart';
 import 'package:ingresafe/providers/user_provider.dart';
 import 'package:ingresafe/utils/app_theme.dart';
 import 'package:provider/provider.dart';
+import 'data/services/ingresafe_analysis_service.dart';
 import 'providers/app_provider.dart';
 import 'utils/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Initialize the analysis service (builds ingredient master + fuzzy matcher)
+  await IngresafeAnalysisService.initializeFromAsset();
+
   // Seed ingredient + alternatives dataset to Firestore (idempotent)
   // Comment this out if datasets are already seeded to prevent permission errors
   // IngredientDataService.seedFirestore();
+  // IngresafeAnalysisService.seedIngredientMasterToFirestore();
   runApp(const IngreSafeApp());
 }
 

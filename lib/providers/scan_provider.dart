@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:ingresafe/data/services/ingredient_data_service.dart';
+import 'package:ingresafe/data/services/ingresafe_analysis_service.dart';
 import 'package:ingresafe/data/services/scan_history_service.dart';
 import 'package:ingresafe/models/ingredient_model.dart';
 import 'package:ingresafe/models/scan_result.dart';
@@ -18,6 +19,9 @@ class ScanProvider with ChangeNotifier {
   String? _errorMessage;
   bool _isSeeded = false;
 
+  /// Stores the last full analysis result for downstream screens
+  AnalysisResult? _lastAnalysis;
+
   final List<ScanResult> _recentScans = [];
 
   File? get image => _image;
@@ -27,6 +31,9 @@ class ScanProvider with ChangeNotifier {
   ScanResult? get currentScan => _currentScan;
   String? get errorMessage => _errorMessage;
   List<ScanResult> get recentScans => List.unmodifiable(_recentScans);
+
+  /// Access the full analysis result (ingredients, fuzzy matches, alternatives, etc.)
+  AnalysisResult? get lastAnalysis => _lastAnalysis;
 
   final OcrService _ocrService = OcrService();
 
@@ -57,7 +64,7 @@ class ScanProvider with ChangeNotifier {
   }
 
   // ---------------------------------------------------------------------------
-  // Main pipeline — real OCR scan
+  // Main pipeline — real OCR scan (uses new analysis service)
   // ---------------------------------------------------------------------------
   Future<void> processImage(File imageFile) async {
     try {
@@ -141,19 +148,33 @@ class ScanProvider with ChangeNotifier {
   }
 
   // ---------------------------------------------------------------------------
-  // Build scan result from OCR text (Firestore-backed ingredient service)
+  // Build scan result using the full analysis pipeline:
+  //   1. IngredientParser   → zero-loss extraction (Issue #1)
+  //   2. FuzzyMatcher       → resolve misspellings  (Issue #4)
+  //   3. RiskRuleEngine     → per-ingredient risk    (Issue #2)
+  //   4. AlternativeEngine  → category-aware alts    (Issue #3)
+  //   5. WarningEngine      → personalised warnings
   // ---------------------------------------------------------------------------
   Future<ScanResult> _buildScanResult(String text) async {
-    final ingredients = await IngredientDataService.parseIngredientsFromText(text);
+    // Run the full analysis pipeline
+    final analysis = await IngresafeAnalysisService.processScan(
+      ocrText: text,
+      productCategory: 'Food', // Default; can be enhanced with category detection
+    );
 
-    String overallRisk = 'Safe';
-    for (final ing in ingredients) {
-      if (ing.riskLevel == 'Risky') {
-        overallRisk = 'Risky';
-        break;
-      }
-      if (ing.riskLevel == 'Caution') overallRisk = 'Caution';
-    }
+    // Store for downstream screens (alternatives, compare, etc.)
+    _lastAnalysis = analysis;
+
+    // Map overall risk level from the new engine's output to the existing
+    // ScanResult risk level format (Safe/Caution/Risky)
+    final overallRisk = _mapRiskLevel(analysis.overallRiskLevel);
+
+    // Use the ingredient models from the analysis, which are enriched with
+    // fuzzy-matched names and full risk data
+    final ingredients = analysis.ingredientModels;
+
+    // Build warnings that include fuzzy match corrections
+    final warnings = _buildWarnings(ingredients, analysis);
 
     return ScanResult(
       productName: _extractProductName(text),
@@ -161,15 +182,48 @@ class ScanProvider with ChangeNotifier {
       riskLevel: overallRisk,
       scannedAt: DateTime.now(),
       ingredients: ingredients,
-      warnings: _buildWarnings(ingredients),
+      warnings: warnings,
     );
   }
 
-  List<String> _buildWarnings(List<IngredientModel> ingredients) {
-    return ingredients
-        .where((i) => i.riskLevel == 'Risky' || i.riskLevel == 'Caution')
-        .map((i) => '${i.name}: ${i.description}')
-        .toList();
+  List<String> _buildWarnings(
+    List<IngredientModel> ingredients,
+    AnalysisResult analysis,
+  ) {
+    final warnings = <String>[];
+
+    // Add ingredient-level warnings
+    for (final ing in ingredients) {
+      if (ing.riskLevel == 'Risky' || ing.riskLevel == 'Caution') {
+        warnings.add('${ing.name}: ${ing.description}');
+      }
+    }
+
+    // Add fuzzy match corrections as informational warnings
+    for (final entry in analysis.fuzzyMatches.entries) {
+      final match = entry.value;
+      if (match != null && !match.isExactMatch) {
+        warnings.add(
+          '📝 Auto-corrected: "${entry.key}" → "${match.matched}" '
+          '(${(match.similarity * 100).toStringAsFixed(0)}% match)',
+        );
+      }
+    }
+
+    return warnings;
+  }
+
+  /// Maps the RiskRuleEngine's "High"/"Medium"/"Low" to the existing
+  /// ScanResult format of "Risky"/"Caution"/"Safe"
+  String _mapRiskLevel(String engineLevel) {
+    switch (engineLevel) {
+      case 'High':
+        return 'Risky';
+      case 'Medium':
+        return 'Caution';
+      default:
+        return 'Safe';
+    }
   }
 
   String _extractProductName(String text) {
@@ -215,3 +269,4 @@ class ScanProvider with ChangeNotifier {
     _ocrService.dispose();
   }
 }
+
