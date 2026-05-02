@@ -1011,6 +1011,222 @@ const _kLocalIngredients = <String, Map<String, dynamic>>{
     'conditionKey': 'Diabetes',
     'category': 'Sweetener',
   },
+
+  // ── Common Indian Product Ingredients ───────────────────────────────────
+
+  'edible vegetable oil': {
+    'risk': 'Caution',
+    'description': 'Blend of vegetable oils — check source for allergens.',
+    'explanation':
+        'Edible vegetable oil is a generic term covering palm, soybean, sunflower, or mixed oils. The specific health impact depends on the source oil and its saturated fat content.',
+    'regulatory':
+        'FSSAI (India) requires labeling of specific oil types. EU requires source specification.',
+    'allergenKey': null,
+    'conditionKey': 'Heart Condition',
+    'category': 'Fat',
+  },
+  'invert sugar syrup': {
+    'risk': 'Caution',
+    'description': 'Processed sweetener — similar to high fructose corn syrup.',
+    'explanation':
+        'Invert sugar syrup is made by splitting sucrose into glucose and fructose. It has a higher glycemic impact than table sugar and is commonly used in biscuits and confectionery in India.',
+    'regulatory':
+        'Permitted in food products. FSSAI regulates sugar content labeling.',
+    'allergenKey': null,
+    'conditionKey': 'Diabetes',
+    'category': 'Sweetener',
+  },
+  'leavening agents': {
+    'risk': 'Safe',
+    'description': 'Baking agents — sodium bicarbonate, ammonium bicarbonate.',
+    'explanation':
+        'Leavening agents like baking soda (sodium bicarbonate) and ammonium bicarbonate help dough rise. They are safe at levels used in food manufacturing.',
+    'regulatory': 'GRAS globally. No safety concerns at food-grade levels.',
+    'allergenKey': null,
+    'conditionKey': null,
+    'category': 'Additive',
+  },
+  'sodium bicarbonate': {
+    'risk': 'Safe',
+    'description': 'Baking soda — common leavening agent.',
+    'explanation':
+        'Sodium bicarbonate is a mild alkaline compound used in baking. It is safe at food-grade levels and is a standard ingredient in biscuits and cakes.',
+    'regulatory': 'GRAS globally. INS 500(ii).',
+    'allergenKey': null,
+    'conditionKey': null,
+    'category': 'Additive',
+  },
+  'ammonium bicarbonate': {
+    'risk': 'Safe',
+    'description': 'Leavening agent — decomposes fully during baking.',
+    'explanation':
+        'Ammonium bicarbonate breaks down into carbon dioxide, ammonia, and water during baking, leaving no residue. Used in flat, crispy products like biscuits.',
+    'regulatory': 'Approved globally. INS 503(ii).',
+    'allergenKey': null,
+    'conditionKey': null,
+    'category': 'Additive',
+  },
+  'emulsifier': {
+    'risk': 'Safe',
+    'description': 'Food emulsifier — helps blend oil and water.',
+    'explanation':
+        'Emulsifiers like lecithin (E322) and mono/diglycerides (E471) are commonly used to improve texture and shelf life. Generally recognized as safe.',
+    'regulatory': 'Approved globally with maximum permitted levels.',
+    'allergenKey': null,
+    'conditionKey': null,
+    'category': 'Additive',
+  },
+  'raising agent': {
+    'risk': 'Safe',
+    'description': 'Leavening agent — helps dough rise during baking.',
+    'explanation':
+        'Raising agents include baking powder, sodium bicarbonate, and similar compounds. They are safe at food-grade levels.',
+    'regulatory': 'GRAS globally. Standard baking ingredient.',
+    'allergenKey': null,
+    'conditionKey': null,
+    'category': 'Additive',
+  },
+  'refined flour': {
+    'risk': 'Caution',
+    'description': 'Maida — stripped of fiber and nutrients; contains gluten.',
+    'explanation':
+        'Refined flour (maida) is wheat flour with bran and germ removed. It has a high glycemic index and contains gluten. Regular consumption may contribute to blood sugar spikes.',
+    'regulatory': 'Must be declared as containing wheat/gluten allergen.',
+    'allergenKey': 'Gluten',
+    'conditionKey': 'Diabetes',
+    'category': 'Grain',
+  },
+  'maida': {
+    'risk': 'Caution',
+    'description': 'Refined wheat flour — high glycemic index; contains gluten.',
+    'explanation':
+        'Maida is the Indian term for refined flour (all-purpose flour). It lacks the fiber and nutrients of whole wheat, leading to rapid blood sugar spikes.',
+    'regulatory': 'Must be declared as containing wheat/gluten allergen.',
+    'allergenKey': 'Gluten',
+    'conditionKey': 'Diabetes',
+    'category': 'Grain',
+  },
+  'edible vegetable fat': {
+    'risk': 'Caution',
+    'description': 'Vegetable-derived fat — often palm or soybean based.',
+    'explanation':
+        'Edible vegetable fat is commonly derived from palm or soybean oil and may be partially hydrogenated. Check for trans fat content.',
+    'regulatory':
+        'FSSAI requires labeling of trans fat content. Maximum 2% trans fat allowed in India.',
+    'allergenKey': null,
+    'conditionKey': 'Heart Condition',
+    'category': 'Fat',
+  },
+  'permitted flavours': {
+    'risk': 'Safe',
+    'description': 'FSSAI-approved natural or artificial flavoring.',
+    'explanation':
+        'Flavoring agents approved by FSSAI for use in food products. The specific compounds may be natural or synthetic but are within regulated safety limits.',
+    'regulatory': 'Regulated by FSSAI in India. Must meet safety standards.',
+    'allergenKey': null,
+    'conditionKey': null,
+    'category': 'Flavoring',
+  },
+  'milk powder': {
+    'risk': 'Caution',
+    'description': 'Dried milk — contains lactose and dairy proteins.',
+    'explanation':
+        'Milk powder retains all proteins and sugars of liquid milk, making it a trigger for people with dairy allergy or lactose intolerance.',
+    'regulatory': 'Must be declared as a major allergen on product labels.',
+    'allergenKey': 'Dairy',
+    'conditionKey': 'Lactose Intolerance',
+    'category': 'Dairy',
+  },
+  'vanillin': {
+    'risk': 'Safe',
+    'description': 'Synthetic vanilla flavoring — widely used and safe.',
+    'explanation':
+        'Vanillin is the primary flavor compound of vanilla. Synthetic vanillin is chemically identical to natural vanillin and is safe at food-grade levels.',
+    'regulatory': 'GRAS in the US. Approved globally.',
+    'allergenKey': null,
+    'conditionKey': null,
+    'category': 'Flavoring',
+  },
+  'edible starch': {
+    'risk': 'Safe',
+    'description': 'Food-grade starch — used as thickener or binder.',
+    'explanation':
+        'Edible starch is derived from corn, potato, or tapioca. Used as a binding agent in biscuits and processed foods.',
+    'regulatory': 'Natural food ingredient. No regulatory restrictions.',
+    'allergenKey': null,
+    'conditionKey': null,
+    'category': 'Grain',
+  },
+  'glucose syrup': {
+    'risk': 'Caution',
+    'description': 'Concentrated glucose — high glycemic impact.',
+    'explanation':
+        'Glucose syrup is a concentrated sugar solution with a very high glycemic index. It rapidly raises blood sugar and is commonly used in confectionery and processed foods.',
+    'regulatory': 'Permitted in food. Contributes to total sugar content on labels.',
+    'allergenKey': null,
+    'conditionKey': 'Diabetes',
+    'category': 'Sweetener',
+  },
+  'edible common salt': {
+    'risk': 'Caution',
+    'description': 'Table salt — high sodium; linked to hypertension.',
+    'explanation':
+        'Edible common salt is sodium chloride. Excessive consumption contributes to high blood pressure, cardiovascular disease, and kidney problems.',
+    'regulatory': 'WHO recommends <5g salt per day.',
+    'allergenKey': null,
+    'conditionKey': 'High Blood Pressure',
+    'category': 'Mineral',
+  },
+  'butter': {
+    'risk': 'Caution',
+    'description': 'Dairy fat — high in saturated fat and cholesterol.',
+    'explanation':
+        'Butter is a dairy product high in saturated fat (~50%). Regular high consumption is linked to elevated LDL cholesterol. Also a dairy allergen.',
+    'regulatory': 'Must be declared as dairy allergen.',
+    'allergenKey': 'Dairy',
+    'conditionKey': 'Heart Condition',
+    'category': 'Fat',
+  },
+  'vegetable oil': {
+    'risk': 'Caution',
+    'description': 'Generic vegetable oil — source and quality varies.',
+    'explanation':
+        'Vegetable oil is a broad term that may include palm, soybean, sunflower, or canola oil. Nutritional profile depends entirely on the source.',
+    'regulatory': 'Labeling regulations vary; FSSAI requires source oil specification.',
+    'allergenKey': null,
+    'conditionKey': null,
+    'category': 'Oil',
+  },
+  'dextrose': {
+    'risk': 'Caution',
+    'description': 'Simple glucose sugar — high glycemic index.',
+    'explanation':
+        'Dextrose is a form of glucose typically derived from corn. It has a glycemic index of 100 (highest possible) and rapidly raises blood sugar.',
+    'regulatory': 'Permitted in food. Must be included in total sugar declaration.',
+    'allergenKey': null,
+    'conditionKey': 'Diabetes',
+    'category': 'Sweetener',
+  },
+  'maltodextrin': {
+    'risk': 'Caution',
+    'description': 'Processed starch — very high glycemic index.',
+    'explanation':
+        'Maltodextrin is a polysaccharide derived from starch with a glycemic index of 85-105. It raises blood sugar very quickly despite not tasting sweet.',
+    'regulatory': 'GRAS in the US. Permitted globally in processed foods.',
+    'allergenKey': null,
+    'conditionKey': 'Diabetes',
+    'category': 'Sweetener',
+  },
+  'soy lecithin': {
+    'risk': 'Safe',
+    'description': 'Soy-derived emulsifier — generally safe even for soy allergy.',
+    'explanation':
+        'Soy lecithin is a phospholipid emulsifier. Highly refined soy lecithin contains minimal soy protein and is unlikely to trigger soy allergy in most individuals.',
+    'regulatory': 'GRAS in the US. Exempt from soy allergen labeling when highly refined.',
+    'allergenKey': null,
+    'conditionKey': null,
+    'category': 'Emulsifier',
+  },
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1709,61 +1925,75 @@ class IngredientDataService {
 
   // ── Parse text → IngredientModel list ──────────────────────────────────────
 
-  /// Scans OCR text against the full ingredient database and returns matches.
+  /// Converts a comma-separated list of resolved ingredient names into
+  /// [IngredientModel] entries.  Every ingredient is guaranteed to appear in
+  /// the returned list — known ones carry full risk data, unknown ones get a
+  /// neutral "Not in Database" entry so they are still displayed in the UI.
   static Future<List<IngredientModel>> parseIngredientsFromText(
     String text,
   ) async {
-    final results = <IngredientModel>[];
-    final lower = text.toLowerCase();
+    if (text.trim().isEmpty) return [];
 
-    // Sort keys by length descending so multi-word phrases match first
+    // Split the incoming comma-separated list into individual tokens
+    final tokens = text
+        .split(RegExp(r'[,;\n\r]'))
+        .map((t) => t.trim())
+        .where((t) => t.length > 1)
+        .toList();
+
+    if (tokens.isEmpty) return [];
+
+    final results = <IngredientModel>[];
+    final addedLower = <String>{}; // track duplicates
+
+    // Sort local keys by length descending for multi-word phrase priority
     final sortedKeys = _kLocalIngredients.keys.toList()
       ..sort((a, b) => b.length.compareTo(a.length));
 
-    for (final key in sortedKeys) {
-      if (lower.contains(key)) {
-        final data = _kLocalIngredients[key]!;
-        results.add(_buildModel(key, data));
+    for (final token in tokens) {
+      final tokenLower = token.toLowerCase().trim();
+      if (tokenLower.isEmpty || addedLower.contains(tokenLower)) continue;
+
+      // 1. Try exact or substring match in local database
+      bool matched = false;
+      for (final key in sortedKeys) {
+        if (tokenLower == key || tokenLower.contains(key) || key.contains(tokenLower)) {
+          results.add(_buildModel(key, _kLocalIngredients[key]!));
+          addedLower.add(tokenLower);
+          matched = true;
+          break;
+        }
       }
-    }
+      if (matched) continue;
 
-    // Firestore supplementary lookup for unknown tokens
-    if (results.isEmpty && text.isNotEmpty) {
+      // 2. Try Firestore supplementary lookup
       try {
-        final tokens = lower
-            .split(RegExp(r'[,;\n\r]'))
-            .map((t) => t.trim())
-            .where((t) => t.length > 2)
-            .take(20)
-            .toList();
-
-        for (final token in tokens) {
-          final data = await lookupIngredient(token);
-          if (data != null) {
-            results.add(_buildModel(token, data));
-          }
+        final data = await lookupIngredient(tokenLower);
+        if (data != null) {
+          results.add(_buildModel(tokenLower, data));
+          addedLower.add(tokenLower);
+          continue;
         }
       } catch (e) {
-        debugPrint('[IngredientDataService] Supplementary lookup failed: $e');
+        debugPrint('[IngredientDataService] Firestore lookup for "$token": $e');
       }
-    }
 
-    // Generic fallback
-    if (results.isEmpty && text.isNotEmpty) {
+      // 3. Not found anywhere → still add as a neutral entry so it is visible
       results.add(
         IngredientModel(
-          name: 'Unknown Ingredients',
-          riskLevel: 'Caution',
-          description:
-              'Could not identify individual ingredients from the label.',
+          name: _capitalize(token),
+          riskLevel: 'Safe',
+          description: 'No additional risk information available.',
           detailedExplanation:
-              'The OCR scan captured text but could not match any known ingredients. Try scanning in better lighting or from a clearer angle.',
+              'This ingredient was not found in our database. It may be a '
+              'common food ingredient with no known health concerns.',
           userImpact:
-              'No personalized risk assessment possible for unrecognized ingredients.',
+              'Check with your healthcare provider if you have specific dietary restrictions.',
           regulatoryNote:
-              'Always consult the original product label for accurate ingredient information.',
+              'Consult the original product label for accurate ingredient details.',
         ),
       );
+      addedLower.add(tokenLower);
     }
 
     return results;
@@ -1881,11 +2111,13 @@ class IngredientDataService {
 
     return IngredientModel(
       name: _capitalize(key),
-      riskLevel: data['risk'] as String,
-      description: data['description'] as String,
-      detailedExplanation: data['explanation'] as String,
+      riskLevel: (data['risk'] as String?) ?? 'Caution',
+      description: (data['description'] as String?) ?? 'Ingredient detected in product.',
+      detailedExplanation: (data['explanation'] as String?) ??
+          'Detailed information not available for this ingredient.',
       userImpact: userImpact,
-      regulatoryNote: data['regulatory'] as String,
+      regulatoryNote: (data['regulatory'] as String?) ??
+          'Consult the original product label for regulatory information.',
       allergenKey: allergen,
       conditionKey: condition,
     );
